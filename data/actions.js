@@ -1,4 +1,5 @@
 // data/actions.js - Actions et décors par personnage
+// CORRIGÉ - Exposition globale des fonctions
 
 const personnageActions = {
     // ==================== PIRATE ====================
@@ -6,15 +7,15 @@ const personnageActions = {
         decors: [
             {
                 nom: "🏴‍☠️ Pont du navire",
-                description: "sur le pont d'un majestueux navire pirate, voiles gonflées par le vent, drapeau noir flottant, océan déchaîné autour"
+                description: "sur le pont d'un majestueux navire pirate, voiles gonflées par le vent, drapeau noir flottant, océan déchaîné autour, ambiance authentique de bateau"
             },
             {
                 nom: "🍺 Taverne enfumée",
-                description: "dans une taverne pirate enfumée, tonneaux de rhum, lanternes suspendues, marins qui rient en arrière-plan"
+                description: "dans une taverne pirate enfumée, tonneaux de rhum, lanternes suspendues, marins qui rient en arrière-plan, ambiance chaleureuse et brute"
             },
             {
                 nom: "🏝️ Île au trésor",
-                description: "sur une île paradisiaque, palmiers, sable blanc, un coffre au trésor entrouvert rempli de pièces d'or"
+                description: "sur une île paradisiaque, palmiers, sable blanc, un coffre au trésor entrouvert rempli de pièces d'or, ambiance aventureuse"
             }
         ],
         actions: [
@@ -38,7 +39,7 @@ const personnageActions = {
         decors: [
             {
                 nom: "🚀 Cockpit futuriste",
-                description: "dans le cockpit high-tech d'un vaisseau spatial, lumières clignotantes, écrans holographiques, étoiles défiler"
+                description: "dans le cockpit high-tech d'un vaisseau spatial, lumières clignotantes, écrans holographiques, étoiles défiler par le hublot"
             },
             {
                 nom: "🌌 Nébuleuse galactique",
@@ -257,40 +258,38 @@ const personnageActions = {
         ]
     },
 
-
-
-// ==================== ZORRO SEXY ====================
-zorro: {
-    decors: [
-        {
-            nom: "🏛️ Mission espagnole sensuelle",
-            description: "devant une mission espagnole sous la lune, arches blanches, ambiance mystérieuse et sensuelle, lumière tamisée"
-        },
-        {
-            nom: "🏘️ Toits du pueblo la nuit",
-            description: "sur les toits du pueblo la nuit, tuiles rouges, clair de lune, ambiance romantique et dangereuse"
-        },
-        {
-            nom: "🌵 Canyon solitaire au clair de lune",
-            description: "dans un canyon rocheux au clair de lune, cactus, ombres allongées, silence sensuel"
-        }
-    ],
-    actions: [
-        {
-            nom: "Signature Z sensuelle",
-            description: "traçant un Z en l'air avec son épée, mouvements lents et sensuels, cape flottante, regard langoureux"
-        },
-        {
-            nom: "Jeu de cape suggestif",
-            description: "enroulant et déroulant sa cape sensuellement, cachant et révélant son corps, dévoilant ses jambes"
-        },
-        {
-            nom: "Combat d'escrime érotique",
-            description: "combat d'escrime chorégraphié sensuel, passes d'armes suggestives, corps à corps torride avec un partenaire imaginaire"
-        }
-    ]
-
-},
+    // ==================== ZORRO SEXY ====================
+    zorro: {
+        decors: [
+            {
+                nom: "🏛️ Mission espagnole sensuelle",
+                description: "devant une mission espagnole sous la lune, arches blanches, ambiance mystérieuse et sensuelle, lumière tamisée"
+            },
+            {
+                nom: "🏘️ Toits du pueblo la nuit",
+                description: "sur les toits du pueblo la nuit, tuiles rouges, clair de lune, ambiance romantique et dangereuse"
+            },
+            {
+                nom: "🌵 Canyon solitaire au clair de lune",
+                description: "dans un canyon rocheux au clair de lune, cactus, ombres allongées, silence sensuel"
+            }
+        ],
+        actions: [
+            {
+                nom: "Signature Z sensuelle",
+                description: "traçant un Z en l'air avec son épée, mouvements lents et sensuels, cape flottante, regard langoureux"
+            },
+            {
+                nom: "Jeu de cape suggestif",
+                description: "enroulant et déroulant sa cape sensuellement, cachant et révélant son corps, dévoilant ses jambes"
+            },
+            {
+                nom: "Combat d'escrime érotique",
+                description: "combat d'escrime chorégraphié sensuel, passes d'armes suggestives, corps à corps torride avec un partenaire imaginaire"
+            }
+        ]
+    },
+    
     // ==================== PRINCESSE ====================
     princess: {
         decors: [
@@ -481,21 +480,75 @@ zorro: {
                 description: "en conseil avec les anciens, posture de leader, regard perçant"
             }
         ]
+    },
+    
+    // ==================== DÉFAUT POUR TOUS LES AUTRES ====================
+    default: {
+        decors: [
+            {
+                nom: "Studio professionnel",
+                description: "dans un studio de danse professionnel, éclairages tamisés, fond noir élégant, ambiance intimiste"
+            },
+            {
+                nom: "Scène de spectacle",
+                description: "sur une scène de spectacle, projecteurs colorés, fumée légère, public en ombres chinoises"
+            },
+            {
+                nom: "Extérieur nuit",
+                description: "en extérieur la nuit, étoiles dans le ciel, éclairage urbain au loin, ambiance mystérieuse"
+            }
+        ],
+        actions: [
+            {
+                nom: "Danse sensuelle",
+                description: "elle danse sensuellement face caméra, mouvements fluides et envoûtants"
+            },
+            {
+                nom: "Pose charmeuse",
+                description: "elle prend une pose charmeuse, regard langoureux, sourire coquin"
+            },
+            {
+                nom: "Interaction",
+                description: "elle interagit avec la caméra, gestes de séduction, mains qui caressent l'objectif"
+            }
+        ]
     }
 };
 
 // Fonction pour obtenir un décor aléatoire pour un personnage
 function getRandomDecor(personnageKey) {
-    const perso = personnageActions[personnageKey];
-    if (!perso) return "studio professionnel";
-    const randomIndex = Math.floor(Math.random() * perso.decors.length);
-    return perso.decors[randomIndex].description;
+    try {
+        const perso = personnageActions[personnageKey];
+        if (!perso || !perso.decors || perso.decors.length === 0) {
+            return personnageActions.default.decors[0].description;
+        }
+        const randomIndex = Math.floor(Math.random() * perso.decors.length);
+        return perso.decors[randomIndex].description;
+    } catch (e) {
+        console.warn("Erreur getRandomDecor:", e);
+        return "dans un studio de danse professionnel, éclairage tamisé";
+    }
 }
 
 // Fonction pour obtenir une action aléatoire pour un personnage
 function getRandomAction(personnageKey) {
-    const perso = personnageActions[personnageKey];
-    if (!perso) return "elle danse sensuellement";
-    const randomIndex = Math.floor(Math.random() * perso.actions.length);
-    return perso.actions[randomIndex].description;
+    try {
+        const perso = personnageActions[personnageKey];
+        if (!perso || !perso.actions || perso.actions.length === 0) {
+            return personnageActions.default.actions[0].description;
+        }
+        const randomIndex = Math.floor(Math.random() * perso.actions.length);
+        return perso.actions[randomIndex].description;
+    } catch (e) {
+        console.warn("Erreur getRandomAction:", e);
+        return "elle danse sensuellement face caméra";
+    }
+}
+
+// EXPOSITION GLOBALE - CRUCIAL POUR script.js
+if (typeof window !== 'undefined') {
+    window.personnageActions = personnageActions;
+    window.getRandomDecor = getRandomDecor;
+    window.getRandomAction = getRandomAction;
+    console.log("✅ actions.js chargé et exposé globalement -", Object.keys(personnageActions).length, "types disponibles");
 }
