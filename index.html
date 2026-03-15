@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Tes styles existants - je les garde */
+        /* Tous les styles existants - je les garde mais je les mets dans un fichier style.css séparé normalement */
         * {
             margin: 0;
             padding: 0;
@@ -1204,7 +1204,7 @@
                     </div>
                 </div>
 
-                <!-- SECTION DÉCOR UNIQUE (CORRIGÉ - PLUS DE DOUBLONS) -->
+                <!-- SECTION DÉCOR UNIQUE -->
                 <div class="card" style="border: 3px solid #00ffff; background: linear-gradient(135deg, rgba(0,255,255,0.15), rgba(0,0,139,0.15));">
                     <div class="card-header">
                         <i class="fas fa-map"></i>
@@ -1241,7 +1241,6 @@
                             </div>
                         </div>
                         
-                        <!-- Info sur le décor automatique -->
                         <div class="info-note" style="margin-top: 15px; background: rgba(255,255,255,0.1);">
                             <i class="fas fa-info-circle"></i> 
                             <strong>Mode automatique :</strong> Si non activé, le décor sera choisi automatiquement selon ton personnage (décors variés et adaptés).
@@ -1318,7 +1317,7 @@
 
     <!-- CHARGEMENT DES SCRIPTS - ORDRE CORRECT -->
     <script src="data/countries.js"></script>
-    <script src="data/actions.js"></script>  <!-- actions.js en deuxième pour exposer getRandomDecor -->
+    <script src="data/actions.js"></script>
     <script src="data/danceMoves.js"></script>
     <script src="data/outfits.js"></script>
     <script src="data/hairColors.js"></script>
