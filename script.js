@@ -1,4 +1,5 @@
-// script.js - Version CORRIGÉE avec transition naturelle et décors unifiés
+// script.js - Version ULTIME avec FINALE SPECTACULAIRE
+// À placer dans le dossier racine à côté de index.html
 
 class PromptGenerator {
     constructor() {
@@ -101,15 +102,7 @@ class PromptGenerator {
             return customDecorText.trim();
         }
         
-        // PRIORITÉ 2: Background personnalisé (ancien système)
-        const bgStyle = document.getElementById('backgroundStyle')?.value || 'auto';
-        const customBg = document.getElementById('customBackgroundDesc')?.value || '';
-        
-        if (bgStyle === 'custom' && customBg.trim() !== '') {
-            return customBg.trim();
-        }
-        
-        // PRIORITÉ 3: Décor aléatoire du personnage
+        // PRIORITÉ 2: Décor aléatoire du personnage
         const actionType = this.getActionType(countryKey);
         const randomDecor = this.getRandomDecor(actionType);
         
@@ -118,7 +111,7 @@ class PromptGenerator {
             return randomDecor;
         }
         
-        // PRIORITÉ 4: Background du pays
+        // PRIORITÉ 3: Background du pays
         if (country && country.background) {
             return country.background;
         }
@@ -937,159 +930,7 @@ RAPPEL ULTIME - TRANSITION NATURELLE :
     }
 }
 
-// ==================== INITIALISATION ====================
-
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("✅ Application ULTIME démarrée avec décors unifiés et transition naturelle renforcée");
-    
-    // Vérifier que les fonctions globales sont disponibles
-    if (typeof window.getRandomDecor !== 'function') {
-        console.warn("⚠️ getRandomDecor non disponible - vérifiez que actions.js est chargé correctement");
-    } else {
-        console.log("✅ getRandomDecor disponible");
-    }
-    
-    initCharacters();
-    initEvents();
-    
-    const generator = new PromptGenerator();
-    
-    document.getElementById('generatePrompt').addEventListener('click', function() {
-        const prompts = generator.generateFullPrompt();
-        window.lastPrompts = prompts;
-        const activeTab = document.querySelector('.tab-btn.active').id;
-        displayPrompt(prompts, activeTab);
-        updateRecap();
-    });
-    
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            const prompts = window.lastPrompts || { full: '', part1: '', part2: '', consignes: '' };
-            displayPrompt(prompts, this.id);
-        });
-    });
-    
-    document.getElementById('copyPrompt').addEventListener('click', function() {
-        const text = document.getElementById('promptDisplay').innerText;
-        navigator.clipboard.writeText(text).then(() => {
-            alert('✅ Prompt copié dans le presse-papiers !');
-        }).catch(() => {
-            alert('❌ Erreur lors de la copie');
-        });
-    });
-    
-    document.getElementById('exportPrompt').addEventListener('click', function() {
-        const text = document.getElementById('promptDisplay').innerText;
-        const blob = new Blob([text], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'prompt_transition.txt';
-        a.click();
-        URL.revokeObjectURL(url);
-    });
-    
-    document.getElementById('clearPrompt').addEventListener('click', function() {
-        document.getElementById('promptDisplay').innerHTML = '';
-        window.lastPrompts = null;
-    });
-    
-    document.getElementById('suggestColors').addEventListener('click', function() {
-        const selected = document.querySelector('.character-card.selected');
-        if (!selected) {
-            alert('Sélectionnez d\'abord un personnage');
-            return;
-        }
-        const country = countries[selected.dataset.country];
-        
-        document.getElementById('leftPalmColor').value = country.palmColors.left;
-        document.getElementById('rightPalmColor').value = country.palmColors.right;
-    });
-    
-    document.getElementById('generateOutfit').addEventListener('click', function() {
-        const selected = document.querySelector('.character-card.selected');
-        if (!selected) {
-            alert('Sélectionnez d\'abord un personnage');
-            return;
-        }
-        const country = countries[selected.dataset.country];
-        
-        let outfitDesc = `${country.finalOutfit.description} aux couleurs ${country.finalOutfit.colors.join(' et ')}. `;
-        outfitDesc += `Éléments : ${country.finalOutfit.elements.join(', ')}. `;
-        outfitDesc += `Accessoires : ${country.finalOutfit.accessories.join(', ')}.`;
-        
-        document.getElementById('finalOutfitDescription').value = outfitDesc;
-    });
-    
-    const fluoIntensity = document.getElementById('fluoIntensity');
-    if (fluoIntensity) {
-        fluoIntensity.addEventListener('input', function() {
-            const val = parseInt(this.value);
-            const labels = ['Faible', 'Léger', 'Moyen', 'Brillant', 'Éclatant', 'Intense', 'Fulgurant', 'Phosphorescent', 'Néon', 'AVEUGLANT'];
-            document.getElementById('intensityValue').textContent = labels[val-1] || 'Éclatant';
-        });
-    }
-    
-    initImageUpload();
-    
-    // Toggle pour les options de texte magique
-    const enableMagicTexts = document.getElementById('enableMagicTexts');
-    if (enableMagicTexts) {
-        enableMagicTexts.addEventListener('change', function() {
-            const options = document.getElementById('magicTextsOptions');
-            if (options) {
-                options.style.display = this.checked ? 'block' : 'none';
-            }
-        });
-    }
-    
-    // SUPPRESSION DE L'ANCIEN SYSTÈME backgroundStyle/customBackground
-    // On garde UN SEUL système: enableCustomDecor/customDecorText
-    
-    // Toggle pour le décor personnalisé (UNIQUE)
-    const enableCustomDecor = document.getElementById('enableCustomDecor');
-    if (enableCustomDecor) {
-        enableCustomDecor.addEventListener('change', function() {
-            const options = document.getElementById('customDecorOptions');
-            if (options) {
-                options.style.display = this.checked ? 'block' : 'none';
-            }
-        });
-    }
-    
-    // Gestionnaire pour l'intensité de séduction
-    const seductionLevel = document.getElementById('seductionLevel');
-    const seductionValue = document.getElementById('seductionValue');
-    if (seductionLevel && seductionValue) {
-        seductionValue.textContent = seductionLevel.value + '/10';
-        seductionLevel.addEventListener('input', function() {
-            seductionValue.textContent = this.value + '/10';
-        });
-    }
-    
-    // Gestionnaire pour les gestes (bisous et viens)
-    const bisousCheckbox = document.getElementById('gesteBisous');
-    const bisousCount = document.getElementById('bisousCount');
-    if (bisousCheckbox && bisousCount) {
-        bisousCount.disabled = !bisousCheckbox.checked;
-        bisousCheckbox.addEventListener('change', function() {
-            bisousCount.disabled = !this.checked;
-        });
-    }
-    
-    const viensCheckbox = document.getElementById('gesteViens');
-    const viensCount = document.getElementById('viensCount');
-    if (viensCheckbox && viensCount) {
-        viensCount.disabled = !viensCheckbox.checked;
-        viensCheckbox.addEventListener('change', function() {
-            viensCount.disabled = !this.checked;
-        });
-    }
-});
-
-// ==================== FONCTIONS ====================
+// ==================== FONCTIONS GLOBALES ====================
 
 function initCharacters() {
     const grid = document.getElementById('countryGrid');
@@ -1225,7 +1066,6 @@ function updateRecap() {
     const alienMode = document.getElementById('enableAlienMode')?.checked ? '👽 ACTIVÉ' : 'Désactivé';
     const textsActive = document.getElementById('enableMagicTexts')?.checked ? '✨ ACTIVÉS' : 'Désactivés';
     
-    // UN SEUL SYSTÈME DE DÉCOR
     const decorActif = document.getElementById('enableCustomDecor')?.checked ? '✅ PERSONNALISÉ' : 'Auto (selon personnage)';
     
     const finaleActif = 
@@ -1270,5 +1110,12 @@ function updateRecap() {
     if (recapDiv) recapDiv.innerHTML = recap.replace(/\n/g, '<br>');
 }
 
-// Vérification finale
+// Exposer les fonctions globalement
+window.initCharacters = initCharacters;
+window.initEvents = initEvents;
+window.initImageUpload = initImageUpload;
+window.displayPrompt = displayPrompt;
+window.updateRecap = updateRecap;
+window.PromptGenerator = PromptGenerator;
+
 console.log("✅ script.js chargé - Version avec décors unifiés et transition naturelle renforcée");
