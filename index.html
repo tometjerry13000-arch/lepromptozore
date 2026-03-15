@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROMPT DANCE STUDIO</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <h1><i class="fas fa-robot"></i> PROMPT DANCE STUDIO</h1>
+            <div class="version">v5.1 - 55 personnages + FINALE SPECTACULAIRE</div>
+        </header>
+
+        <div class="main-content">
+            <!-- COLONNE GAUCHE - PARAMÈTRES -->
+            <div class="left-col">
+                <!-- SECTION PERSONNAGES -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-user-tag"></i>
+                        <h3>PERSONNAGES</h3>
+                        <span class="badge">55</span>
+                    </div>
+                    <div class="card-body">
+                        <input type="text" id="characterSearch" placeholder="Rechercher..." class="search-input">
+                        <div class="characters-grid" id="countryGrid"></div>
+                        <div class="selected-info" id="selectedCountry">
+                            Sélectionné: <span>Aucun</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION UPLOAD -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-camera"></i>
+                        <h3>IMAGE DE RÉFÉRENCE</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="upload-area" id="uploadArea">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Cliquez ou glissez votre photo</p>
+                            <input type="file" id="imageInput" accept="image/*" hidden>
+                        </div>
+                        <div class="image-preview" id="imagePreview" style="display: none;">
+                            <img id="previewImg" src="#" alt="Aperçu">
+                            <button class="remove-btn" id="removeImage"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION COULEURS -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-palette"></i>
+                        <h3>COULEURS DES PAUMES</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="color-row">
+                            <div class="color-item">
+                                <label>GAUCHE</label>
+                                <input type="color" id="leftPalmColor" value="#ff0000">
+                            </div>
+                            <div class="color-item">
+                                <label>DROITE</label>
+                                <input type="color" id="rightPalmColor" value="#000000">
+                            </div>
+                        </div>
+                        <button class="btn secondary" id="suggestColors">
+                            <i class="fas fa-magic"></i> Suggérer couleurs
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SECTION TENUE DÉPART -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-tshirt"></i>
+                        <h3>TENUE DE DÉPART</h3>
+                    </div>
+                    <div class="card-body">
+                        <input type="text" id="startingTop" placeholder="Haut" value="petit top blanc" class="outfit-input">
+                        <input type="text" id="startingBottom" placeholder="Bas" value="short en jean" class="outfit-input">
+                        <input type="text" id="startingDetails" placeholder="Détails" value="pieds nus" class="outfit-input">
+                    </div>
+                </div>
+
+                <!-- SECTION TENUE FINALE -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-crown"></i>
+                        <h3>TENUE FINALE</h3>
+                    </div>
+                    <div class="card-body">
+                        <textarea id="finalOutfitDescription" rows="4" placeholder="Description de la tenue finale..."></textarea>
+                        <button class="btn primary" id="generateOutfit">
+                            <i class="fas fa-wand-magic"></i> Générer tenue
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SECTION CHEVEUX FLUO -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-magic"></i>
+                        <h3>CHEVEUX FLUO</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="toggle-container">
+                            <label class="switch">
+                                <input type="checkbox" id="enableFluo" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <span class="switch-label">Activer cheveux fluo</span>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Couleur naturelle</label>
+                            <input type="text" id="naturalHair" value="bruns/noirs" class="full-width">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Couleur fluo</label>
+                            <select id="fluoColor" class="full-width">
+                                <option value="rouge fluo">🔴 ROUGE FLUO</option>
+                                <option value="rose fluo">🌸 ROSE FLUO</option>
+                                <option value="bleu électrique">💙 BLEU ÉLECTRIQUE</option>
+                                <option value="vert fluo">💚 VERT FLUO</option>
+                                <option value="jaune fluo">💛 JAUNE FLUO</option>
+                                <option value="violet fluo">💜 VIOLET FLUO</option>
+                                <option value="orange fluo">🧡 ORANGE FLUO</option>
+                                <option value="argent métallique">✨ ARGENT</option>
+                                <option value="or cosmique">🌟 OR COSMIQUE</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Intensité fluo <span id="intensityValue">Éclatant</span></label>
+                            <input type="range" id="fluoIntensity" min="1" max="10" value="9" class="slider-input">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Style de coiffure</label>
+                            <select id="hairStyle" class="full-width">
+                                <option value="détachés">Longs et détachés</option>
+                                <option value="chignon">Chignon élaboré</option>
+                                <option value="tresses">Tresses / Nattes</option>
+                                <option value="attachés">Attachés avec mèches</option>
+                                <option value="bouclés">Bouclés volumineux</option>
+                                <option value="alien">Coiffure extraterrestre</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION TEXTES MAGIQUES FLOTTANTS -->
+                <div class="card" style="border: 2px solid #9b59b6; background: linear-gradient(135deg, rgba(155,89,182,0.1), rgba(52,152,219,0.1));">
+                    <div class="card-header">
+                        <i class="fas fa-magic"></i>
+                        <h3>TEXTES MAGIQUES FLOTTANTS</h3>
+                        <span class="badge" style="background: #9b59b6;">EFFETS</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="toggle-container">
+                            <label class="switch">
+                                <input type="checkbox" id="enableMagicTexts">
+                                <span class="slider"></span>
+                            </label>
+                            <span class="switch-label">Activer les textes magiques</span>
+                        </div>
+                        
+                        <div id="magicTextsOptions" style="margin-top: 15px; display: none;">
+                            
+                            <!-- SÉLECTION DES TEXTES -->
+                            <div class="input-group">
+                                <label>TEXTES À AFFICHER</label>
+                                <div class="checkbox-grid" style="grid-template-columns: repeat(2,1fr);">
+                                    <label class="checkbox-label"><input type="checkbox" id="textFollow" checked> "Follow Me"</label>
+                                    <label class="checkbox-label"><input type="checkbox" id="textLike" checked> "Like Me"</label>
+                                    <label class="checkbox-label"><input type="checkbox" id="textSubscribe"> "Subscribe"</label>
+                                    <label class="checkbox-label"><input type="checkbox" id="textLove"> "Love Me"</label>
+                                    <label class="checkbox-label"><input type="checkbox" id="textWatch"> "Watch Me"</label>
+                                    <label class="checkbox-label"><input type="checkbox" id="textShare"> "Share Me"</label>
+                                    <label class="checkbox-label"><input type="checkbox" id="textHeart"> "❤️" (cœurs)</label>
+                                    <label class="checkbox-label"><input type="checkbox" id="textStar"> "✨" (étoiles)</label>
+                                </div>
+                            </div>
+                            
+                            <!-- EFFETS VISUELS -->
+                            <div class="input-group">
+                                <label>✨ EFFET VISUEL</label>
+                                <select id="textEffect" class="full-width">
+                                    <option value="neon">🔮 Néon lumineux</option>
+                                    <option value="glow">🌟 Lueur magique</option>
+                                    <option value="fire">🔥 Enflammé</option>
+                                    <option value="ice">❄️ Glacé / Cristal</option>
+                                    <option value="rainbow">🌈 Arc-en-ciel</option>
+                                    <option value="gold">👑 Doré étincelant</option>
+                                    <option value="silver">💎 Argenté</option>
+                                    <option value="hologram">🌀 Holographique</option>
+                                </select>
+                            </div>
+                            
+                            <!-- MOUVEMENT -->
+                            <div class="input-group">
+                                <label>🌀 MOUVEMENT</label>
+                                <select id="textMovement" class="full-width">
+                                    <option value="float">🎈 Flottant (léger)</option>
+                                    <option value="spin">🔄 Rotation lente</option>
+                                    <option value="orbit">🌍 Orbite autour d'elle</option>
+                                    <option value="bounce">🤸 Rebondissant</option>
+                                    <option value="wave">🌊 Vagues</option>
+                                    <option value="follow">👁️ Suivent son regard</option>
+                                    <option value="random">🎲 Aléatoire</option>
+                                </select>
+                            </div>
+                            
+                            <!-- COULEUR PRINCIPALE -->
+                            <div class="color-row">
+                                <div class="color-item">
+                                    <label>🎨 COULEUR</label>
+                                    <input type="color" id="textColor" value="#ff6b6b">
+                                </div>
+                                <div class="color-item">
+                                    <label>💎 COULEUR SECONDAIRE</label>
+                                    <input type="color" id="textColor2" value="#4ecdc4">
+                                </div>
+                            </div>
+                            
+                            <!-- TAILLE ET QUANTITÉ -->
+                            <div class="color-row">
+                                <div class="color-item">
+                                    <label>📏 TAILLE</label>
+                                    <select id="textSize" class="full-width">
+                                        <option value="small">Petit</option>
+                                        <option value="medium" selected>Moyen</option>
+                                        <option value="large">Grand</option>
+                                        <option value="xlarge">Très grand</option>
+                                    </select>
+                                </div>
+                                <div class="color-item">
+                                    <label>🔢 QUANTITÉ</label>
+                                    <select id="textQuantity" class="full-width">
+                                        <option value="few">Peu (2-3)</option>
+                                        <option value="medium" selected>Moyen (4-6)</option>
+                                        <option value="many">Beaucoup (7-10)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- POSITION ET TIMING -->
+                            <div class="color-row">
+                                <div class="color-item">
+                                    <label>📍 POSITION</label>
+                                    <select id="textPosition" class="full-width">
+                                        <option value="all">Partout</option>
+                                        <option value="around">Autour d'elle</option>
+                                        <option value="above">Au-dessus</option>
+                                        <option value="behind">En arrière-plan</option>
+                                    </select>
+                                </div>
+                                <div class="color-item">
+                                    <label>⏱️ MOMENT</label>
+                                    <select id="textTiming" class="full-width">
+                                        <option value="whole">Toute la vidéo</option>
+                                        <option value="part2">Partie 2 seulement</option>
+                                        <option value="transition">À la transition</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- EFFETS SPÉCIAUX -->
+                            <div class="input-group">
+                                <label>⚡ EFFETS SPÉCIAUX</label>
+                                <div class="checkbox-grid" style="grid-template-columns: repeat(2,1fr);">
+                                    <label class="checkbox-label"><input type="checkbox" id="effectSparkle" checked> ✨ Scintillement</label>
+                                    <label class="checkbox-label"><input type="checkbox" id="effectPulse"> 💓 Pulsation</label>
+                                    <label class="checkbox-label"><input type="checkbox" id="effectFade"> 🌫️ Apparition/disparition</label>
+                                    <label class="checkbox-label"><input type="checkbox" id="effectTrail"> 🌠 Traînée lumineuse</label>
+                                    <label class="checkbox-label"><input type="checkbox" id="effectShadow"> 👤 Ombre portée</label>
+                                    <label class="checkbox-label"><input type="checkbox" id="effect3d" checked> 🎲 Effet 3D</label>
+                                </div>
+                            </div>
+                            
+                            <!-- APERÇU DU RENDU -->
+                            <div class="info-note" style="margin-top: 15px; padding: 15px; background: rgba(155,89,182,0.2); border-radius: 10px; text-align: center;">
+                                <i class="fas fa-eye"></i> 
+                                <span style="display: block; margin-top: 10px; font-size: 1.2em; text-shadow: 0 0 10px #9b59b6;">
+                                    "Follow Me" • "Like Me" • "❤️"
+                                </span>
+                                <small style="display: block; margin-top: 10px;">Les textes flottent autour d'elle avec des effets magiques !</small>
+                            </div>
+                            
+                            <!-- TEXTE PERSONNALISÉ -->
+                            <div class="input-group" style="margin-top: 15px;">
+                                <label>✏️ TEXTE PERSONNALISÉ (optionnel)</label>
+                                <input type="text" id="customText" placeholder="Ex: Mon propre texte..." class="full-width">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+<!-- 🎬 SECTION FINALE SPECTACULAIRE (À AJOUTER) -->
+<div class="card" style="border: 3px solid #ffd700; background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,140,0,0.15));">
+    <div class="card-header">
+        <i class="fas fa-star"></i>
+        <h3>🎬 FINALE SPECTACULAIRE (4ème seconde)</h3>
+        <span class="badge" style="background: #ffd700; color: black;">NOUVEAU</span>
+    </div>
+    <div class="card-body">
+        <div class="info-note" style="margin-bottom: 15px; background: rgba(255,215,0,0.2); border-left-color: #ffd700; text-align: center;">
+            <i class="fas fa-clock"></i> 
+            <strong style="color: #ffd700;">À la 4ème seconde de la partie 2</strong> - Choisis ton/tes gestes finaux
+        </div>
+        
+        <div class="checkbox-grid" style="grid-template-columns: repeat(2,1fr); gap: 12px;">
+            <label class="checkbox-label" style="color: #ffd700;">
+                <input type="checkbox" id="finalBisou" checked> 💋 Bisou final langoureux
+            </label>
+            <label class="checkbox-label" style="color: #ffd700;">
+                <input type="checkbox" id="finalCiao" checked> 👋 Ciao de la main
+            </label>
+            <label class="checkbox-label" style="color: #ffd700;">
+                <input type="checkbox" id="finalMasque"> 🖐️ Masquage de l'objectif
+            </label>
+            <label class="checkbox-label" style="color: #ffd700;">
+                <input type="checkbox" id="finalCoeur"> 💖 Cœur avec les mains
+            </label>
+            <label class="checkbox-label" style="color: #ffd700;">
+                <input type="checkbox" id="finalClignement" checked> 😉 Clin d'œil appuyé
+            </label>
+            <label class="checkbox-label" style="color: #ffd700;">
+                <input type="checkbox" id="finalCascade"> 💋💋 Cascade de bisous
+            </label>
+            <label class="checkbox-label" style="color: #ffd700;">
+                <input type="checkbox" id="finalRevelation"> ✨ Révélation (bras écartés)
+            </label>
+            <label class="checkbox-label" style="color: #ffd700;">
+                <input type="checkbox" id="finalSalut"> 👑 Salut royal
+            </label>
+            <label class="checkbox-label" style="color: #ffd700;">
+                <input type="checkbox" id="finalRegard" checked> 👁️ Regard intense
+            </label>
+            <label class="checkbox-label" style="color: #ffd700;">
+                <input type="checkbox" id="finalViens"> 👉 Dernier geste "viens"
+            </label>
+            <label class="checkbox-label" style="color: #ffd700;">
+                <input type="checkbox" id="finalSouffle"> 💨 Souffle sensuel
+            </label>
+            <label class="checkbox-label" style="color: #ffd700;">
+                <input type="checkbox" id="finalEpaule"> 🔥 Découverte épaule
+            </label>
+            <label class="checkbox-label" style="color: #ffd700;">
+                <input type="checkbox" id="finalCheveux"> 💇 Rejet de cheveux
+            </label>
+        </div>
+        
+        <div style="margin-top: 20px; display: flex; gap: 15px; flex-wrap: wrap;">
+            <div style="flex: 1;">
+                <label style="color: #ffd700; display: block; margin-bottom: 5px;">🎞️ FIN DE LA VIDÉO :</label>
+                <select id="finalOption" class="full-width" style="border-color: #ffd700;">
+                    <option value="freeze">📸 Freeze frame (image figée)</option>
+                    <option value="fondu">🌫️ Fondu au noir</option>
+                    <option value="fonduBlanc">✨ Fondu au blanc</option>
+                    <option value="zoom">🔍 Zoom sur son visage</option>
+                    <option value="flou">🌀 Flou artistique</option>
+                </select>
+            </div>
+            
+            <div style="flex: 1;">
+                <label style="color: #ffd700; display: block; margin-bottom: 5px;">⏱️ TEMPS DE MAINTIEN :</label>
+                <select id="finalMaintien" class="full-width" style="border-color: #ffd700;">
+                    <option value="1">1 seconde</option>
+                    <option value="2" selected>2 secondes</option>
+                    <option value="3">3 secondes</option>
+                </select>
+            </div>
+        </div>
+        
+        <div style="margin-top: 15px;">
+            <label style="color: #ffd700; display: block; margin-bottom: 5px;">😊 ÉMOTION FINALE :</label>
+            <select id="finalEmotion" class="full-width" style="border-color: #ffd700;">
+                <option value="satisfaite">😌 Satisfaite</option>
+                <option value="coquine">😏 Coquine</option>
+                <option value="intense">🔥 Intense</option>
+                <option value="victorieuse">👑 Victorieuse</option>
+                <option value="mysterieuse">🖤 Mystérieuse</option>
+            </select>
+        </div>
+        
+        <div style="margin-top: 15px;">
+            <label style="color: #ffd700; display: block; margin-bottom: 5px;">👁️ INTERACTION PUBLIC :</label>
+            <select id="finalInteraction" class="full-width" style="border-color: #ffd700;">
+                <option value="regard">Regard dans les yeux</option>
+                <option value="sourire">Sourire éclatant</option>
+                <option value="clin">Clin d'œil complice</option>
+                <option value="main">Main tendue</option>
+                <option value="tous">Alternance des trois</option>
+            </select>
+        </div>
+        
+        <div class="info-note" style="margin-top: 15px; background: rgba(255,215,0,0.2);">
+            <i class="fas fa-info-circle"></i> 
+            <strong>Conseil :</strong> Tu peux sélectionner 1, 2 ou plusieurs gestes. Ils s'enchaîneront naturellement.
+        </div>
+    </div>
+</div>
+                <!-- SECTION SÉDUCTION -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-heart"></i>
+                        <h3>SÉDUCTION</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group">
+                            <label>Intensité <span id="seductionValue">9/10</span></label>
+                            <input type="range" id="seductionLevel" min="1" max="10" value="9" class="slider-input">
+                        </div>
+                        
+                        <div class="checkbox-grid">
+                            <label class="checkbox-label"><input type="checkbox" id="gesteRegards" checked> Regards charmeurs</label>
+                            <label class="checkbox-label"><input type="checkbox" id="gesteSourires" checked> Sourires coquins</label>
+                            <label class="checkbox-label"><input type="checkbox" id="gesteClins" checked> Clins d'œil</label>
+                            <label class="checkbox-label"><input type="checkbox" id="gesteLevres" checked> Lèvre mordue</label>
+                            <label class="checkbox-label"><input type="checkbox" id="gesteMains" checked> Mains caressantes</label>
+                            <label class="checkbox-label"><input type="checkbox" id="gesteCheveux" checked> Jeux cheveux</label>
+                            <label class="checkbox-label"><input type="checkbox" id="gesteBisous" checked> Envoyer des bisous</label>
+                            <label class="checkbox-label"><input type="checkbox" id="gesteViens" checked> Geste "viens vers moi"</label>
+                        </div>
+                        
+                        <div class="number-group">
+                            <div class="number-item">
+                                <label>Nombre de bisous</label>
+                                <input type="number" id="bisousCount" value="3" min="1" max="10">
+                            </div>
+                            <div class="number-item">
+                                <label>Nombre de gestes "viens"</label>
+                                <input type="number" id="viensCount" value="4" min="1" max="10">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+   
+
+                <!-- SECTION EFFETS DE BASE -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-star"></i>
+                        <h3>EFFETS DE BASE</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="checkbox-grid">
+                            <label class="checkbox-label"><input type="checkbox" id="effectConfettis" checked> 🎉 Confettis</label>
+                            <label class="checkbox-label"><input type="checkbox" id="effectPoudre" checked> ✨ Poudre</label>
+                            <label class="checkbox-label"><input type="checkbox" id="effectPétales" checked> 🌸 Pétales</label>
+                            <label class="checkbox-label"><input type="checkbox" id="effectFumee" checked> 💨 Fumée</label>
+                            <label class="checkbox-label"><input type="checkbox" id="effectLumières" checked> 💡 Lumières</label>
+                            <label class="checkbox-label"><input type="checkbox" id="effectPaillettes" checked> 💎 Paillettes</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION EFFETS AVANCÉS -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-bolt"></i>
+                        <h3>EFFETS AVANCÉS</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="checkbox-grid">
+                            <label class="checkbox-label"><input type="checkbox" id="effectExplosion"> 💥 Explosion</label>
+                            <label class="checkbox-label"><input type="checkbox" id="effectTeleportation"> ⚡ Téléportation</label>
+                            <label class="checkbox-label"><input type="checkbox" id="effectMirror"> 🪞 Double / Miroir</label>
+                            <label class="checkbox-label"><input type="checkbox" id="effectTimeLapse"> ⏱️ Accéléré</label>
+                            <label class="checkbox-label"><input type="checkbox" id="effectHologram"> 👻 Hologrammes</label>
+                            <label class="checkbox-label"><input type="checkbox" id="effectClone"> 👯 Clones</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION EFFETS SPÉCIAUX -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-fire"></i>
+                        <h3>EFFETS SPÉCIAUX</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="checkbox-grid">
+                            <label class="checkbox-label"><input type="checkbox" id="effectFeu"> 🔥 Flammes</label>
+                            <label class="checkbox-label"><input type="checkbox" id="effectEau"> 💧 Eau / Vagues</label>
+                            <label class="checkbox-label"><input type="checkbox" id="effectGlace"> ❄️ Glace / Cristaux</label>
+                            <label class="checkbox-label"><input type="checkbox" id="effectEclairs"> ⚡ Éclairs</label>
+                            <label class="checkbox-label"><input type="checkbox" id="effectPapillons"> 🦋 Papillons</label>
+                            <label class="checkbox-label"><input type="checkbox" id="effectPlumes"> 🪶 Plumes</label>
+                            <label class="checkbox-label"><input type="checkbox" id="effectLaser"> 💫 Lasers</label>
+                            <label class="checkbox-label"><input type="checkbox" id="effectBulles"> 🫧 Bulles</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION MUSIQUE -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-music"></i>
+                        <h3>MUSIQUE</h3>
+                    </div>
+                    <div class="card-body">
+                        <select id="musicStyle" class="full-width">
+                            <option value="traditionnelle">🎵 Traditionnelle</option>
+                            <option value="moderne">🎧 Moderne / Remix</option>
+                            <option value="epique">🎬 Épique</option>
+                            <option value="silence">🤫 Silence</option>
+                        </select>
+                        <label class="checkbox-label" style="margin-top: 10px;">
+                            <input type="checkbox" id="soundEffects"> Effets sonores (baisers, claquements)
+                        </label>
+                    </div>
+                </div>
+
+                <!-- SECTION MODE ALIEN -->
+                <div class="card alien-card">
+                    <div class="card-header">
+                        <i class="fas fa-robot"></i>
+                        <h3>MODE ALIEN</h3>
+                        <span class="badge">EXPÉRIMENTAL</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="toggle-container">
+                            <label class="switch">
+                                <input type="checkbox" id="enableAlienMode">
+                                <span class="slider"></span>
+                            </label>
+                            <span class="switch-label">Activer mode extraterrestre</span>
+                        </div>
+                        
+                        <div id="alienOptions" style="margin-top: 15px;">
+                            <div class="checkbox-grid">
+                                <label class="checkbox-label"><input type="checkbox" id="alienSkin"> Peau irisée</label>
+                                <label class="checkbox-label"><input type="checkbox" id="alienEyes"> Yeux lumineux</label>
+                                <label class="checkbox-label"><input type="checkbox" id="alienAntenna"> Antennes</label>
+                                <label class="checkbox-label"><input type="checkbox" id="alienGlow"> Phosphorescent</label>
+                                <label class="checkbox-label"><input type="checkbox" id="alienTattoos"> Tatouages</label>
+                                <label class="checkbox-label"><input type="checkbox" id="alienHolograms"> Hologrammes</label>
+                                <label class="checkbox-label"><input type="checkbox" id="alienVoice"> Voix modulée</label>
+                                <label class="checkbox-label"><input type="checkbox" id="alienGravity"> Apesanteur</label>
+                                <label class="checkbox-label"><input type="checkbox" id="alienTeleportation"> Téléportation</label>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label>Couleur peau</label>
+                                <select id="alienSkinColor" class="full-width">
+                                    <option value="argent">Argent métallique</option>
+                                    <option value="or">Or cosmique</option>
+                                    <option value="bleu">Bleu holographique</option>
+                                    <option value="violet">Violet galactique</option>
+                                    <option value="rose">Rose nébuleuse</option>
+                                    <option value="cyan">Cyan extraterrestre</option>
+                                </select>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label>Couleur yeux</label>
+                                <select id="alienEyesColor" class="full-width">
+                                    <option value="rouge">Rouge</option>
+                                    <option value="bleu">Bleu électrique</option>
+                                    <option value="vert">Vert</option>
+                                    <option value="violet">Violet</option>
+                                    <option value="jaune">Jaune</option>
+                                </select>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label>Style antennes</label>
+                                <select id="antennaStyle" class="full-width">
+                                    <option value="antennes">Antennes fines</option>
+                                    <option value="cornes">Cornes stylisées</option>
+                                    <option value="couronne">Couronne lumineuse</option>
+                                    <option value="halo">Halo de lumière</option>
+                                </select>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label>Couleur lueur</label>
+                                <select id="glowColor" class="full-width">
+                                    <option value="bleu">Bleu</option>
+                                    <option value="vert">Vert</option>
+                                    <option value="rose">Rose</option>
+                                    <option value="violet">Violet</option>
+                                    <option value="or">Or</option>
+                                </select>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label>Style tatouages</label>
+                                <select id="tattooStyle" class="full-width">
+                                    <option value="symboles">Symboles aliens</option>
+                                    <option value="runes">Runes anciennes</option>
+                                    <option value="galaxie">Motifs galactiques</option>
+                                    <option value="circuits">Circuits imprimés</option>
+                                </select>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label>Hologrammes</label>
+                                <select id="hologramType" class="full-width">
+                                    <option value="etoiles">Étoiles filantes</option>
+                                    <option value="planetes">Planètes miniatures</option>
+                                    <option value="symboles">Symboles mystiques</option>
+                                    <option value="energie">Sphères d'énergie</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Option Avatar spécifique -->
+                <div class="input-group" style="margin-top: 10px;">
+                    <label>🔵 MODE AVATAR</label>
+                    <div class="checkbox-grid">
+                        <label class="checkbox-label"><input type="checkbox" id="avatarSkin"> Peau bleue Na'vi</label>
+                        <label class="checkbox-label"><input type="checkbox" id="avatarEars"> Oreilles pointues</label>
+                        <label class="checkbox-label"><input type="checkbox" id="avatarTail"> Queue</label>
+                        <label class="checkbox-label"><input type="checkbox" id="avatarStripes"> Rayures lumineuses</label>
+                    </div>
+                </div>
+
+                <!-- SECTION ARRIÈRE-PLAN -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-image"></i>
+                        <h3>ARRIÈRE-PLAN</h3>
+                    </div>
+                    <div class="card-body">
+                        <select id="backgroundStyle" class="full-width">
+                            <option value="auto">Auto (selon personnage)</option>
+                            <option value="tablao">Tablao flamenco</option>
+                            <option value="carnaval">Carnaval</option>
+                            <option value="palais">Palais</option>
+                            <option value="savane">Savane</option>
+                            <option value="japonais">Jardin japonais</option>
+                            <option value="space">Espace / Galaxie</option>
+                            <option value="custom">Personnalisé</option>
+                        </select>
+                        
+                        <div id="customBackground" style="display: none; margin-top: 10px;">
+                            <textarea id="customBackgroundDesc" rows="3" placeholder="Décrivez votre décor..." class="full-width"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION DÉCOR PERSONNALISÉ -->
+                <div class="card" style="border: 2px solid #00ffff; background: linear-gradient(135deg, rgba(0,255,255,0.1), rgba(0,0,139,0.1));">
+                    <div class="card-header">
+                        <i class="fas fa-map"></i>
+                        <h3>DÉCOR PERSONNALISÉ</h3>
+                        <span class="badge" style="background: #00ffff; color: black;">OPTIONNEL</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="toggle-container">
+                            <label class="switch">
+                                <input type="checkbox" id="enableCustomDecor">
+                                <span class="slider"></span>
+                            </label>
+                            <span class="switch-label">Activer décor personnalisé</span>
+                        </div>
+                        
+                        <div id="customDecorOptions" style="margin-top: 15px; display: none;">
+                            <div class="input-group">
+                                <label>✏️ TON DÉCOR (description libre)</label>
+                                <textarea id="customDecorText" rows="4" placeholder="Exemple: sur une plage paradisiaque de Neptune..." class="full-width"></textarea>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label>🎨 AMBIANCE</label>
+                                <select id="decorAmbiance" class="full-width">
+                                    <option value="lumineux">✨ Lumineuse</option>
+                                    <option value="sombre">🌑 Sombre / Mystérieuse</option>
+                                    <option value="romantique">🌸 Romantique</option>
+                                    <option value="épique">⚡ Épique</option>
+                                    <option value="féerique">🧚 Féerique</option>
+                                    <option value="apocalyptique">💥 Apocalyptique</option>
+                                </select>
+                            </div>
+                            
+                            <div class="checkbox-grid" style="grid-template-columns: repeat(2,1fr); margin-top: 10px;">
+                                <label class="checkbox-label"><input type="checkbox" id="decorEffetLumieres"> 💡 Lumières dynamiques</label>
+                                <label class="checkbox-label"><input type="checkbox" id="decorEffetParticules"> ✨ Particules magiques</label>
+                                <label class="checkbox-label"><input type="checkbox" id="decorEffetReflets"> 💧 Reflets / Miroir</label>
+                                <label class="checkbox-label"><input type="checkbox" id="decorEffetProfondeur"> 🌀 Profondeur de champ</label>
+                            </div>
+                            
+                            <div class="info-note" style="margin-top: 15px; padding: 10px; background: rgba(0,255,255,0.2); border-radius: 8px;">
+                                <i class="fas fa-info-circle"></i> 
+                                <small>Ton décor personnalisé REMPLACERA le décor automatique du personnage !</small>
+                            </div>
+                            
+                            <div style="margin-top: 15px;">
+                                <label>📋 EXEMPLES :</label>
+                                <div style="display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap;">
+                                    <button type="button" class="btn small" onclick="document.getElementById('customDecorText').value = 'sur une plage paradisiaque de Neptune, sable noir irisé, vagues bioluminescentes bleues, ciel avec anneaux planétaires, ambiance mystique'">🏖️ Plage Neptune</button>
+                                    <button type="button" class="btn small" onclick="document.getElementById('customDecorText').value = 'dans un vaisseau spatial abandonné, lumières vacillantes, hublots avec vue sur une nébuleuse, poussière d\'étoiles'">🚀 Vaisseau</button>
+                                    <button type="button" class="btn small" onclick="document.getElementById('customDecorText').value = 'sur un nuage magique, ciel rose et orange, oiseaux arc-en-ciel, échelle de Jacob descendant des cieux'">☁️ Nuage</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION SURPRISE -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-face-surprise"></i>
+                        <h3>NIVEAU DE SURPRISE</h3>
+                    </div>
+                    <div class="card-body">
+                        <input type="range" id="surpriseLevel" min="1" max="10" value="7" class="slider-input">
+                        <div class="slider-labels">
+                            <span>Subtile</span>
+                            <span>Wow</span>
+                            <span>Explosif</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOUTON GÉNÉRER -->
+                <button class="generate-btn" id="generatePrompt">
+                    <i class="fas fa-bolt"></i> GÉNÉRER LE PROMPT
+                </button>
+            </div>
+
+            <!-- COLONNE DROITE - RÉSULTAT -->
+            <div class="right-col">
+                <div class="result-card">
+                    <div class="result-header">
+                        <h3><i class="fas fa-terminal"></i> PROMPT GÉNÉRÉ</h3>
+                        <div class="result-actions">
+                            <button class="icon-btn" id="copyPrompt"><i class="fas fa-copy"></i></button>
+                            <button class="icon-btn" id="exportPrompt"><i class="fas fa-download"></i></button>
+                            <button class="icon-btn" id="clearPrompt"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="prompt-tabs">
+                        <button class="tab-btn active" id="tabFull">Complet</button>
+                        <button class="tab-btn" id="tabPart1">Partie 1</button>
+                        <button class="tab-btn" id="tabPart2">Partie 2</button>
+                        <button class="tab-btn" id="tabConsignes">Consignes</button>
+                    </div>
+                    
+                    <div class="prompt-display" id="promptDisplay"></div>
+                    
+                    <div class="recap">
+                        <h4>RÉCAPITULATIF</h4>
+                        <div id="recapContent"></div>
+                    </div>
+                    
+                    <div class="tips">
+                        <h4>CONSEILS</h4>
+                        <ul>
+                            <li><i class="fas fa-check-circle"></i> Sélectionnez un personnage</li>
+                            <li><i class="fas fa-check-circle"></i> Choisissez vos effets</li>
+                            <li><i class="fas fa-check-circle"></i> Générez le prompt</li>
+                            <li><i class="fas fa-check-circle"></i> Copiez dans Grok</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2024 - PROMPT DANCE STUDIO - 55 personnages - FINALE SPECTACULAIRE INCLUS</p>
+        </footer>
+    </div>
+
+    <!-- CHARGEMENT DES SCRIPTS -->
+    <script src="data/countries.js"></script>
+    <script src="data/danceMoves.js"></script>
+    <script src="data/outfits.js"></script>
+    <script src="data/actions.js"></script>
+    <script src="data/hairColors.js"></script>
+    <script src="data/seductionGestures.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
