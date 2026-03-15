@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PROMPT DANCE STUDIO</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Styles supplémentaires pour corriger l'affichage */
+        /* Tous les styles existants - je les garde mais je les mets dans un fichier style.css séparé normalement */
         * {
             margin: 0;
             padding: 0;
@@ -564,7 +563,6 @@
             color: rgba(255, 255, 255, 0.7);
         }
         
-        /* Scrollbar personnalisée */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -584,7 +582,7 @@
         <!-- HEADER -->
         <header>
             <h1><i class="fas fa-robot"></i> PROMPT DANCE STUDIO</h1>
-            <div class="version">v5.2 - 55 personnages - Décors unifiés - Transition naturelle renforcée</div>
+            <div class="version">v5.2 - 55 personnages - CORRECTION BOUTON</div>
         </header>
 
         <div class="main-content">
@@ -867,7 +865,7 @@
                     </div>
                 </div>
 
-                <!-- SECTION DÉCOR UNIQUE (CORRIGÉ - PLUS DE DOUBLONS) -->
+                <!-- SECTION DÉCOR UNIQUE -->
                 <div class="card" style="border: 3px solid #00ffff; background: linear-gradient(135deg, rgba(0,255,255,0.15), rgba(0,0,139,0.15));">
                     <div class="card-header">
                         <i class="fas fa-map"></i>
@@ -904,7 +902,6 @@
                             </div>
                         </div>
                         
-                        <!-- Info sur le décor automatique -->
                         <div class="info-note" style="margin-top: 15px; background: rgba(255,255,255,0.1);">
                             <i class="fas fa-info-circle"></i> 
                             <strong>Mode automatique :</strong> Si non activé, le décor sera choisi automatiquement selon ton personnage (décors variés et adaptés).
@@ -1308,7 +1305,7 @@
         </footer>
     </div>
 
-    <!-- CHARGEMENT DES SCRIPTS DANS LE BON ORDRE -->
+    <!-- CHARGEMENT DES SCRIPTS - ORDRE CORRIGÉ -->
     <script src="data/countries.js"></script>
     <script src="data/actions.js"></script>
     <script src="data/danceMoves.js"></script>
@@ -1317,62 +1314,211 @@
     <script src="data/seductionGestures.js"></script>
     <script src="templates/part1Template.js"></script>
     <script src="templates/part2Template.js"></script>
-    <script src="script.js"></script>
     
+    <!-- SCRIPT.JS CHARGÉ À LA FIN AVEC VÉRIFICATION -->
     <script>
-        // Script supplémentaire pour les toggles
-        document.addEventListener('DOMContentLoaded', function() {
-            // Toggle pour le mode alien
+        // Variable pour vérifier que tout est chargé
+        window.scriptsLoaded = {
+            countries: false,
+            actions: false,
+            danceMoves: false,
+            outfits: false,
+            hairColors: false,
+            seductionGestures: false
+        };
+        
+        // Fonction pour démarrer l'application
+        function startApp() {
+            console.log("✅ Tous les scripts chargés, démarrage de l'application...");
+            
+            // Initialisation des personnages
+            if (typeof initCharacters === 'function') {
+                initCharacters();
+            }
+            
+            if (typeof initEvents === 'function') {
+                initEvents();
+            }
+            
+            if (typeof initImageUpload === 'function') {
+                initImageUpload();
+            }
+            
+            // Création du générateur
+            const generator = new PromptGenerator();
+            
+            // Attachement des événements
+            document.getElementById('generatePrompt').addEventListener('click', function() {
+                const prompts = generator.generateFullPrompt();
+                window.lastPrompts = prompts;
+                const activeTab = document.querySelector('.tab-btn.active').id;
+                if (typeof displayPrompt === 'function') {
+                    displayPrompt(prompts, activeTab);
+                }
+                if (typeof updateRecap === 'function') {
+                    updateRecap();
+                }
+            });
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const prompts = window.lastPrompts || { full: '', part1: '', part2: '', consignes: '' };
+                    if (typeof displayPrompt === 'function') {
+                        displayPrompt(prompts, this.id);
+                    }
+                });
+            });
+            
+            document.getElementById('copyPrompt').addEventListener('click', function() {
+                const text = document.getElementById('promptDisplay').innerText;
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('✅ Prompt copié dans le presse-papiers !');
+                }).catch(() => {
+                    alert('❌ Erreur lors de la copie');
+                });
+            });
+            
+            document.getElementById('exportPrompt').addEventListener('click', function() {
+                const text = document.getElementById('promptDisplay').innerText;
+                const blob = new Blob([text], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'prompt_transition.txt';
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+            
+            document.getElementById('clearPrompt').addEventListener('click', function() {
+                document.getElementById('promptDisplay').innerHTML = '';
+                window.lastPrompts = null;
+            });
+            
+            document.getElementById('suggestColors').addEventListener('click', function() {
+                const selected = document.querySelector('.character-card.selected');
+                if (!selected) {
+                    alert('Sélectionnez d\'abord un personnage');
+                    return;
+                }
+                const country = countries[selected.dataset.country];
+                
+                document.getElementById('leftPalmColor').value = country.palmColors.left;
+                document.getElementById('rightPalmColor').value = country.palmColors.right;
+            });
+            
+            document.getElementById('generateOutfit').addEventListener('click', function() {
+                const selected = document.querySelector('.character-card.selected');
+                if (!selected) {
+                    alert('Sélectionnez d\'abord un personnage');
+                    return;
+                }
+                const country = countries[selected.dataset.country];
+                
+                let outfitDesc = `${country.finalOutfit.description} aux couleurs ${country.finalOutfit.colors.join(' et ')}. `;
+                outfitDesc += `Éléments : ${country.finalOutfit.elements.join(', ')}. `;
+                outfitDesc += `Accessoires : ${country.finalOutfit.accessories.join(', ')}.`;
+                
+                document.getElementById('finalOutfitDescription').value = outfitDesc;
+            });
+            
+            // Toggles
+            const enableMagicTexts = document.getElementById('enableMagicTexts');
+            if (enableMagicTexts) {
+                enableMagicTexts.addEventListener('change', function() {
+                    const options = document.getElementById('magicTextsOptions');
+                    if (options) {
+                        options.style.display = this.checked ? 'block' : 'none';
+                    }
+                });
+            }
+            
+            const enableCustomDecor = document.getElementById('enableCustomDecor');
+            if (enableCustomDecor) {
+                enableCustomDecor.addEventListener('change', function() {
+                    const options = document.getElementById('customDecorOptions');
+                    if (options) {
+                        options.style.display = this.checked ? 'block' : 'none';
+                    }
+                });
+            }
+            
             const alienToggle = document.getElementById('enableAlienMode');
             const alienOptions = document.getElementById('alienOptions');
             if (alienToggle && alienOptions) {
-                alienOptions.style.display = alienToggle.checked ? 'block' : 'none';
                 alienToggle.addEventListener('change', function() {
                     alienOptions.style.display = this.checked ? 'block' : 'none';
                 });
             }
             
-            // Toggle pour les textes magiques
-            const magicToggle = document.getElementById('enableMagicTexts');
-            const magicOptions = document.getElementById('magicTextsOptions');
-            if (magicToggle && magicOptions) {
-                magicOptions.style.display = magicToggle.checked ? 'block' : 'none';
-                magicToggle.addEventListener('change', function() {
-                    magicOptions.style.display = this.checked ? 'block' : 'none';
-                });
-            }
-            
-            // Toggle pour le décor personnalisé (UNIQUE)
-            const decorToggle = document.getElementById('enableCustomDecor');
-            const decorOptions = document.getElementById('customDecorOptions');
-            if (decorToggle && decorOptions) {
-                decorOptions.style.display = decorToggle.checked ? 'block' : 'none';
-                decorToggle.addEventListener('change', function() {
-                    decorOptions.style.display = this.checked ? 'block' : 'none';
-                });
-            }
-            
-            // Mise à jour de l'intensité fluo
+            // Sliders
             const fluoIntensity = document.getElementById('fluoIntensity');
-            const intensityValue = document.getElementById('intensityValue');
-            if (fluoIntensity && intensityValue) {
-                const labels = ['Faible', 'Léger', 'Moyen', 'Brillant', 'Éclatant', 'Intense', 'Fulgurant', 'Phosphorescent', 'Néon', 'AVEUGLANT'];
-                intensityValue.textContent = labels[fluoIntensity.value - 1] || 'Éclatant';
-                
+            if (fluoIntensity) {
                 fluoIntensity.addEventListener('input', function() {
-                    intensityValue.textContent = labels[this.value - 1] || 'Éclatant';
+                    const val = parseInt(this.value);
+                    const labels = ['Faible', 'Léger', 'Moyen', 'Brillant', 'Éclatant', 'Intense', 'Fulgurant', 'Phosphorescent', 'Néon', 'AVEUGLANT'];
+                    document.getElementById('intensityValue').textContent = labels[val-1] || 'Éclatant';
                 });
             }
             
-            // Mise à jour de l'intensité de séduction
             const seductionLevel = document.getElementById('seductionLevel');
             const seductionValue = document.getElementById('seductionValue');
             if (seductionLevel && seductionValue) {
-                seductionValue.textContent = seductionLevel.value + '/10';
                 seductionLevel.addEventListener('input', function() {
                     seductionValue.textContent = this.value + '/10';
                 });
             }
+            
+            // Checkbox dépendantes
+            const bisousCheckbox = document.getElementById('gesteBisous');
+            const bisousCount = document.getElementById('bisousCount');
+            if (bisousCheckbox && bisousCount) {
+                bisousCount.disabled = !bisousCheckbox.checked;
+                bisousCheckbox.addEventListener('change', function() {
+                    bisousCount.disabled = !this.checked;
+                });
+            }
+            
+            const viensCheckbox = document.getElementById('gesteViens');
+            const viensCount = document.getElementById('viensCount');
+            if (viensCheckbox && viensCount) {
+                viensCount.disabled = !viensCheckbox.checked;
+                viensCheckbox.addEventListener('change', function() {
+                    viensCount.disabled = !this.checked;
+                });
+            }
+            
+            console.log("✅ Application démarrée avec succès !");
+        }
+        
+        // Vérification du chargement des scripts
+        function checkScripts() {
+            const required = [
+                { name: 'countries', var: typeof countries !== 'undefined' },
+                { name: 'personnageActions (window)', var: typeof window.personnageActions !== 'undefined' },
+                { name: 'danceMoves', var: typeof danceMoves !== 'undefined' },
+                { name: 'outfitsLibrary', var: typeof outfitsLibrary !== 'undefined' },
+                { name: 'hairColors', var: typeof hairColors !== 'undefined' },
+                { name: 'seductionGestures', var: typeof seductionGestures !== 'undefined' },
+                { name: 'PromptGenerator', var: typeof PromptGenerator !== 'undefined' }
+            ];
+            
+            const missing = required.filter(item => !item.var).map(item => item.name);
+            
+            if (missing.length > 0) {
+                console.warn('⚠️ Scripts manquants:', missing.join(', '));
+                setTimeout(checkScripts, 100); // Réessayer dans 100ms
+            } else {
+                console.log('✅ Tous les scripts sont chargés !');
+                startApp();
+            }
+        }
+        
+        // Lancer la vérification après le chargement de la page
+        window.addEventListener('load', function() {
+            console.log("📦 Page chargée, vérification des scripts...");
+            setTimeout(checkScripts, 200); // Petit délai pour laisser les scripts se charger
         });
     </script>
 </body>
