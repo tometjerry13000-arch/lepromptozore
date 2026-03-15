@@ -1,4 +1,4 @@
-// script.js - Version ULTIME avec FINALE SPECTACULAIRE SENSUEL
+// script.js - Version CORRIGÉE avec transition naturelle et décors unifiés
 
 class PromptGenerator {
     constructor() {
@@ -19,15 +19,41 @@ class PromptGenerator {
             'avatarwarrior': 'avatarwarrior',
             'avatarchief': 'avatarchief'
         };
+        
+        // Vérification des dépendances au chargement
+        this.checkDependencies();
+    }
+
+    checkDependencies() {
+        const dependencies = {
+            'countries': typeof countries !== 'undefined',
+            'personnageActions (window)': typeof window.personnageActions !== 'undefined',
+            'danceMoves': typeof danceMoves !== 'undefined',
+            'outfitsLibrary': typeof outfitsLibrary !== 'undefined',
+            'hairColors': typeof hairColors !== 'undefined',
+            'seductionGestures': typeof seductionGestures !== 'undefined'
+        };
+        
+        const missing = Object.entries(dependencies)
+            .filter(([, exists]) => !exists)
+            .map(([name]) => name);
+        
+        if (missing.length > 0) {
+            console.warn('⚠️ Dépendances manquantes:', missing.join(', '));
+        } else {
+            console.log('✅ Toutes les dépendances sont chargées');
+        }
     }
 
     getActionType(personnageKey) {
         const country = countries[personnageKey];
-        if (!country) return 'pirate';
+        if (!country) return 'default';
         
         let type = country.type || personnageKey;
         
-        if (typeof personnageActions !== 'undefined' && personnageActions[type]) {
+        // Utiliser window.personnageActions (exposé globalement)
+        const actions = window.personnageActions || {};
+        if (actions[type]) {
             return type;
         }
         
@@ -35,15 +61,75 @@ class PromptGenerator {
             return this.typeMapping[type];
         }
         
-        console.warn(`Type "${type}" non trouvé, utilisation de "pirate" comme fallback`);
-        return 'pirate';
+        console.warn(`Type "${type}" non trouvé, utilisation de "default"`);
+        return 'default';
     }
 
-    // ===== NOUVELLE MÉTHODE POUR LE FINALE SENSUEL =====
+    getRandomDecor(personnageKey) {
+        // Utiliser la fonction globale si disponible
+        if (typeof window.getRandomDecor === 'function') {
+            return window.getRandomDecor(personnageKey);
+        }
+        
+        // Fallback
+        return "dans un studio de danse professionnel, éclairage tamisé, ambiance intimiste";
+    }
+
+    getRandomAction(personnageKey) {
+        // Utiliser la fonction globale si disponible
+        if (typeof window.getRandomAction === 'function') {
+            return window.getRandomAction(personnageKey);
+        }
+        
+        // Fallback
+        return "elle danse sensuellement face caméra";
+    }
+
+    // ===== NOUVELLE MÉTHODE POUR LE DÉCOR UNIFIÉ =====
+    getUnifiedDecor() {
+        const selected = document.querySelector('.character-card.selected');
+        if (!selected) return "studio professionnel";
+        
+        const countryKey = selected.dataset.country;
+        const country = countries[countryKey];
+        
+        // PRIORITÉ 1: Décor personnalisé activé
+        const customDecorEnabled = document.getElementById('enableCustomDecor')?.checked || false;
+        const customDecorText = document.getElementById('customDecorText')?.value || '';
+        
+        if (customDecorEnabled && customDecorText.trim() !== '') {
+            return customDecorText.trim();
+        }
+        
+        // PRIORITÉ 2: Background personnalisé (ancien système)
+        const bgStyle = document.getElementById('backgroundStyle')?.value || 'auto';
+        const customBg = document.getElementById('customBackgroundDesc')?.value || '';
+        
+        if (bgStyle === 'custom' && customBg.trim() !== '') {
+            return customBg.trim();
+        }
+        
+        // PRIORITÉ 3: Décor aléatoire du personnage
+        const actionType = this.getActionType(countryKey);
+        const randomDecor = this.getRandomDecor(actionType);
+        
+        // Si le décor aléatoire est valide, l'utiliser
+        if (randomDecor && randomDecor !== "studio professionnel") {
+            return randomDecor;
+        }
+        
+        // PRIORITÉ 4: Background du pays
+        if (country && country.background) {
+            return country.background;
+        }
+        
+        // FALLBACK ULTIME
+        return "dans un studio de danse professionnel avec éclairages tamisés et ambiance intimiste";
+    }
+
     getFinaleGesture() {
         const finaleGestures = [];
         
-        // Collection de gestes finaux sensuels et interactifs avec le public
         if (document.getElementById('finalBisou')?.checked) 
             finaleGestures.push('elle envoie UN DERNIER BISOU LANGOUREUX à la caméra, ses doigts effleurant ses lèvres avant de s\'ouvrir lentement vers le spectateur, les yeux mi-clos dans un regard de désir');
         
@@ -83,16 +169,13 @@ class PromptGenerator {
         if (document.getElementById('finalCheveux')?.checked) 
             finaleGestures.push('elle REJETTE SES CHEVEUX EN ARRIÈRE d\'un geste lent et sensuel, sa main glissant à travers les mèches, le cou offert au regard du spectateur');
         
-        // Si aucun geste sélectionné, retourner un geste par défaut sensuel
         if (finaleGestures.length === 0) {
             return 'elle envoie un dernier bisou du bout des doigts, suivit d\'un clin d\'œil complice, puis caresse lentement son épaule en fixant la caméra';
         }
         
-        // Combiner tous les gestes sélectionnés de façon fluide
         if (finaleGestures.length === 1) {
             return finaleGestures[0];
         } else {
-            // Combiner avec "puis" et "enfin" pour une narration fluide
             const lastGesture = finaleGestures.pop();
             if (finaleGestures.length === 1) {
                 return finaleGestures[0] + ' puis ' + lastGesture;
@@ -102,7 +185,6 @@ class PromptGenerator {
         }
     }
 
-    // ===== NOUVELLE MÉTHODE POUR LES OPTIONS DE FIN =====
     getFinalOption() {
         const option = document.getElementById('finalOption')?.value || 'freeze';
         const duree = document.getElementById('finalMaintien')?.value || '2';
@@ -128,10 +210,6 @@ class PromptGenerator {
             'flou': {
                 description: `un FLOU ARTISTIQUE PROGRESSIF, ses traits devenant de plus en plus éthérés comme un rêve qui s'achève, ne laissant que son sourire visible pendant ${duree} secondes`,
                 technique: 'flou de rêve'
-            },
-            'iris': {
-                description: `un EFFET IRIS CINÉMATOGRAPHIQUE, le cercle se refermant lentement sur son visage comme dans les films muets, sur ${duree} secondes`,
-                technique: 'fermeture à l’iris'
             }
         };
         
@@ -143,7 +221,6 @@ class PromptGenerator {
         };
     }
 
-    // ===== MÉTHODE POUR L'INTERACTION AVEC LE PUBLIC =====
     getPublicInteraction() {
         const interaction = document.getElementById('finalInteraction')?.value || 'regard';
         
@@ -195,8 +272,6 @@ class PromptGenerator {
                 mains: document.getElementById('gesteMains')?.checked || false,
                 cheveux: document.getElementById('gesteCheveux')?.checked || false
             },
-            background: document.getElementById('backgroundStyle')?.value || 'auto',
-            customBackground: document.getElementById('customBackgroundDesc')?.value || '',
             effects: {
                 confettis: document.getElementById('effectConfettis')?.checked || false,
                 poudre: document.getElementById('effectPoudre')?.checked || false,
@@ -273,19 +348,12 @@ class PromptGenerator {
                 customText: document.getElementById('customText')?.value || ''
             },
             
+            // UN SEUL SYSTÈME DE DÉCOR PERSONNALISÉ
             customDecor: {
                 enabled: document.getElementById('enableCustomDecor')?.checked || false,
-                text: document.getElementById('customDecorText')?.value || '',
-                ambiance: document.getElementById('decorAmbiance')?.value || 'lumineux',
-                effets: {
-                    lumieres: document.getElementById('decorEffetLumieres')?.checked || false,
-                    particules: document.getElementById('decorEffetParticules')?.checked || false,
-                    reflets: document.getElementById('decorEffetReflets')?.checked || false,
-                    profondeur: document.getElementById('decorEffetProfondeur')?.checked || false
-                }
+                text: document.getElementById('customDecorText')?.value || ''
             },
             
-            // ===== NOUVELLES DONNÉES POUR LE FINALE =====
             finale: {
                 bisou: document.getElementById('finalBisou')?.checked || false,
                 ciao: document.getElementById('finalCiao')?.checked || false,
@@ -540,7 +608,9 @@ ${effectText}
             gesturesText += `- Elle fait le geste "viens vers moi" avec son index (${this.userData.gestures.viensCount} fois)\n`;
         }
 
-        const danceMoves = country.danceMoves?.part1?.join('\n    - ') || 'mouvements sensuels';
+        const danceMoves = (danceMoves && danceMoves[this.userData.country]?.part1) ? 
+            danceMoves[this.userData.country].part1.join('\n    - ') : 
+            'mouvements sensuels';
         
         const floatingTextsPart1 = this.generateFloatingWordsForVideo("part1");
 
@@ -642,7 +712,9 @@ IMPORTANT - PRÉPARATION POUR LA PARTIE 2 :
             gesturesText += `- Elle fait le geste "viens" ${this.userData.gestures.viensCount} fois, de plus en plus charmeur\n`;
         }
 
-        const danceMoves = country.danceMoves?.part2?.join('\n    - ') || 'mouvements encore plus intenses';
+        const danceMoves = (danceMoves && danceMoves[this.userData.country]?.part2) ? 
+            danceMoves[this.userData.country].part2.join('\n    - ') : 
+            'mouvements encore plus intenses';
 
         let baseEffects = [];
         if (this.userData.effects.confettis) baseEffects.push('confettis aux couleurs de la tenue');
@@ -662,44 +734,11 @@ IMPORTANT - PRÉPARATION POUR LA PARTIE 2 :
 
         const actionType = this.getActionType(this.userData.country);
         
-        const decorAleatoire = (typeof getRandomDecor === 'function') ? 
-            getRandomDecor(actionType) : (country.background || 'studio professionnel');
+        // UTILISATION DU SYSTÈME DE DÉCOR UNIFIÉ
+        const decorText = this.getUnifiedDecor();
         
-        const actionAleatoire = (typeof getRandomAction === 'function') ? 
-            getRandomAction(actionType) : 'elle danse sensuellement';
-
-        // GESTION DU DÉCOR PERSONNALISÉ
-        let decorText = '';
-        if (this.userData.customDecor?.enabled && this.userData.customDecor.text) {
-            decorText = this.userData.customDecor.text;
-            
-            let ambianceText = '';
-            switch(this.userData.customDecor.ambiance) {
-                case 'lumineux': ambianceText = 'lumineuse et chatoyante'; break;
-                case 'sombre': ambianceText = 'sombre et mystérieuse'; break;
-                case 'romantique': ambianceText = 'romantique et douce'; break;
-                case 'épique': ambianceText = 'épique et grandiose'; break;
-                case 'féerique': ambianceText = 'féerique et magique'; break;
-                case 'apocalyptique': ambianceText = 'apocalyptique et dramatique'; break;
-                default: ambianceText = 'lumineuse';
-            }
-            
-            let effetsList = [];
-            if (this.userData.customDecor.effets.lumieres) effetsList.push('lumières dynamiques');
-            if (this.userData.customDecor.effets.particules) effetsList.push('particules magiques');
-            if (this.userData.customDecor.effets.reflets) effetsList.push('reflets miroir');
-            if (this.userData.customDecor.effets.profondeur) effetsList.push('profondeur de champ cinématographique');
-            
-            if (effetsList.length > 0) {
-                decorText += `, ambiance ${ambianceText} avec ${effetsList.join(', ')}`;
-            } else {
-                decorText += `, ambiance ${ambianceText}`;
-            }
-        } else {
-            decorText = this.userData.background === 'custom' ? 
-                this.userData.customBackground : 
-                decorAleatoire;
-        }
+        // Action aléatoire
+        const actionAleatoire = this.getRandomAction(actionType);
 
         // ===== GÉNÉRATION DU FINALE SPECTACULAIRE =====
         const finale = this.getFinaleGesture();
@@ -748,26 +787,31 @@ ${finale}
 
         const prompt = `Suite de la transition - DEUXIÈME PARTIE de 6 secondes.
 
-CONTINUITÉ PARFAITE DU VISAGE :
+CONTINUITÉ PARFAITE DU VISAGE - ABSOLUMENT CRUCIAL :
 - Le sujet est STRICTEMENT IDENTIQUE à celui de la PARTIE 1
-- Mêmes traits, même visage, expression encore plus intense
-- Reconnaissable au premier coup d'œil
+- MÊMES TRAITS, MÊME VISAGE, expression encore plus intense
+- RECONNAISSABLE AU PREMIER COUP D'ŒIL - AUCUNE ERREUR POSSIBLE
+- La transformation ne concerne QUE les vêtements, PAS le visage
 
-👇 INSTRUCTIONS ULTRA-RÉALISTES (VISAGE INCHANGÉ) 👇
+👇 INSTRUCTIONS ULTRA-RÉALISTES RENFORCÉES (VISAGE INCHANGÉ) 👇
 - Le visage est STRICTEMENT IDENTIQUE à la PARTIE 1 avec la même texture microscopique
 - Même peau : pores visibles à différentes échelles, grains de beauté, rougeurs légères
 - Mêmes cils individuels, mêmes sourcils avec poils distincts
-- 👁️ YEUX 8K NATURELS conservés : iris détaillés, vaisseaux visibles, reflets nets
+- 👁️ YEUX 8K NATURELS conservés : iris hyper détaillés, vaisseaux sanguins visibles, reflets multiples nets
 - Même éclairage Rembrandt qui sculpte les volumes
 - Même grain de film léger, pas de lissage artificiel
-- La transformation ne concerne QUE les vêtements, pas le visage
-- Aucun filtre beauté - rendu 100% naturel et humain
+- MÊMES IMPERFECTIONS NATURELLES conservées - asymétries, petits défauts
+- AUCUN filtre beauté - rendu 100% naturel et humain
+- Le visage doit être INDISCERNABLE d'une vraie photo professionnelle
 
-⚠️ ATTENTION - TRANSFORMATION DÉJÀ ACCOMPLIE ⚠️ :
+⚠️ TRANSITION NATURELLE - INSTRUCTION CAPITALE ⚠️ :
 - Pendant le court instant où les mains masquaient l'objectif (fin de la PARTIE 1), elle a eu le temps de SE CHANGER COMPLÈTEMENT
-- La transformation a eu lieu HORS CAMÉRA
+- La transformation a eu lieu HORS CAMÉRA - RIEN de magique ou d'instantané
 - Dès que les mains s'écartent, le résultat FINAL est déjà visible
 - AUCUN changement ne doit être visible pendant cette PARTIE 2 (cheveux déjà colorés, tenue déjà portée, maquillage déjà appliqué)
+- LA TRANSFORMATION DOIT SEMBLER NATURELLE, comme un simple changement de tenue en coulisses
+- PAS d'effet de morphing, pas de transition magique - c'est DÉJÀ FAIT quand les mains se retirent
+- Le réalisme est PRIMORDIAL - on doit croire qu'elle s'est changée pendant que l'écran était noir
 
 GESTES DE SÉDUCTION IMMÉDIATS DÈS LE RETRAIT DES MAINS :
 ${this.userData.gestures.bisous ? '- Elle envoie UN BISOUD À LA CAMÉRA dès que ses mains se retirent' : ''}
@@ -824,7 +868,7 @@ JEUX AVEC LES CHEVEUX FLUO (DÉJÀ COLORÉS) :
 
 ${floatingTextsPart2}
 
-ARRIÈRE-PLAN :
+ARRIÈRE-PLAN - DÉCOR UNIFIÉ :
 ${decorText}
 
 ${advancedEffects ? advancedEffects + '\n' : ''}
@@ -840,10 +884,11 @@ CAMÉRA ET ÉCLAIRAGE :
 - Pendant le finale, la lumière se resserre sur elle (spotlight) pour accentuer le moment
 - Ambiance intimiste et professionnelle
 
-RAPPEL IMPORTANT :
+RAPPEL ULTIME - TRANSITION NATURELLE :
 - La transformation est DÉJÀ TERMINÉE au début de cette partie
 - AUCUNE métamorphose visible pendant ces 6 secondes
 - Tout a eu lieu PENDANT que les mains cachaient l'objectif dans la PARTIE 1
+- Le réalisme est ABSOLUMENT CRUCIAL - on doit croire qu'elle s'est changée en coulisses
 - La FINALE est le MOMENT CLÉ à retenir - elle doit être PARFAITE`;
 
         return prompt;
@@ -859,21 +904,20 @@ RAPPEL IMPORTANT :
         
         return `CONSIGNES DE COHÉRENCE ABSOLUE :
 
-1. VISAGE IDENTIQUE : Le sujet de la PARTIE 2 a EXACTEMENT le même visage que la PARTIE 1
-2. SILENCE TOTAL : Pas un mot - elle communique par sa danse, ses regards et ses sourires
-3. SÉDUCTION MAGNÉTIQUE : Elle est charmeuse, captivante, elle joue avec le spectateur
-4. GESTES DE SÉDUCTION DIRECTE : ${this.userData.gestures.bisous ? 'BISOUS à la caméra' : ''} ${this.userData.gestures.viens ? 'et gestes "VIENS"' : ''}
-5. TENUE DE DÉPART COMPLÈTEMENT REMPLACÉE : Plus rien de la tenue initiale
-6. CHEVEUX ${this.userData.enableFluo ? 'TRANSFORMÉS EN COULEURS FLUO' : 'CONSERVÉS NATURELS'}
-7. TRANSITION NATURELLE : Changement réaliste hors caméra
-8. TRANSITION IMMÉDIATE : Dès que les mains s'écartent, la nouvelle tenue est visible
-9. COULEURS ANNONÇATRICES : ${this.userData.leftPalmColorName} et ${this.userData.rightPalmColorName} des paumes = couleurs dominantes de la tenue finale
-10. MOUVEMENTS PRÉCIS : Chorégraphie technique et sensuelle
-11. INSPIRATION CULTURELLE : ${country.name} - ${country.dance}
-12. ⚠️ TRANSFORMATION DÉJÀ ACCOMPLIE : AUCUN changement visible pendant la PARTIE 2 - tout a eu lieu PENDANT que les mains cachaient l'objectif
-13. RENDU ULTRA-RÉALISTE : Visage avec pores, défauts, imperfections - PAS DE PEAU LISSE IA
-14. YEUX 8K NATURELS : Iris détaillés, vaisseaux visibles, reflets nets
-15. FINALE SPECTACULAIRE : À la 4ème seconde, elle exécute son geste final face au public, maintient la pose, puis effet de fin choisi${alienLine}`;
+1. VISAGE IDENTIQUE : Le sujet de la PARTIE 2 a EXACTEMENT le même visage que la PARTIE 1 - AUCUNE ERREUR POSSIBLE
+2. TRANSITION NATURELLE OBLIGATOIRE : La transformation a eu lieu HORS CAMÉRA pendant que les mains cachaient l'objectif - RIEN de magique, tout est DÉJÀ FAIT au début de la partie 2
+3. RENDU ULTRA-RÉALISTE DU VISAGE : Peau avec pores, grains de beauté, imperfections - PAS DE PEAU LISSE IA
+4. YEUX 8K NATURELS : Iris hyper détaillés, vaisseaux visibles, reflets multiples nets
+5. SILENCE TOTAL : Pas un mot - elle communique par sa danse, ses regards et ses sourires
+6. SÉDUCTION MAGNÉTIQUE : Elle est charmeuse, captivante, elle joue avec le spectateur
+7. GESTES DE SÉDUCTION DIRECTE : ${this.userData.gestures.bisous ? 'BISOUS à la caméra' : ''} ${this.userData.gestures.viens ? 'et gestes "VIENS"' : ''}
+8. TENUE DE DÉPART COMPLÈTEMENT REMPLACÉE : Plus rien de la tenue initiale
+9. CHEVEUX ${this.userData.enableFluo ? 'TRANSFORMÉS EN COULEURS FLUO' : 'CONSERVÉS NATURELS'}
+10. COULEURS ANNONÇATRICES : ${this.userData.leftPalmColorName} et ${this.userData.rightPalmColorName} des paumes = couleurs dominantes de la tenue finale
+11. MOUVEMENTS PRÉCIS : Chorégraphie technique et sensuelle
+12. INSPIRATION CULTURELLE : ${country.name} - ${country.dance}
+13. ⚠️ TRANSFORMATION DÉJÀ ACCOMPLIE - CRUCIAL : AUCUN changement visible pendant la PARTIE 2 - tout a eu lieu PENDANT que les mains cachaient l'objectif
+14. FINALE SPECTACULAIRE : À la 4ème seconde, elle exécute son geste final face au public, maintient la pose, puis effet de fin choisi${alienLine}`;
     }
 
     generateFullPrompt() {
@@ -896,7 +940,14 @@ RAPPEL IMPORTANT :
 // ==================== INITIALISATION ====================
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("✅ Application ULTIME démarrée avec FINALE SPECTACULAIRE");
+    console.log("✅ Application ULTIME démarrée avec décors unifiés et transition naturelle renforcée");
+    
+    // Vérifier que les fonctions globales sont disponibles
+    if (typeof window.getRandomDecor !== 'function') {
+        console.warn("⚠️ getRandomDecor non disponible - vérifiez que actions.js est chargé correctement");
+    } else {
+        console.log("✅ getRandomDecor disponible");
+    }
     
     initCharacters();
     initEvents();
@@ -994,18 +1045,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Toggle pour l'arrière-plan personnalisé
-    const backgroundStyle = document.getElementById('backgroundStyle');
-    if (backgroundStyle) {
-        backgroundStyle.addEventListener('change', function() {
-            const customBg = document.getElementById('customBackground');
-            if (customBg) {
-                customBg.style.display = this.value === 'custom' ? 'block' : 'none';
-            }
-        });
-    }
+    // SUPPRESSION DE L'ANCIEN SYSTÈME backgroundStyle/customBackground
+    // On garde UN SEUL système: enableCustomDecor/customDecorText
     
-    // Toggle pour le décor personnalisé
+    // Toggle pour le décor personnalisé (UNIQUE)
     const enableCustomDecor = document.getElementById('enableCustomDecor');
     if (enableCustomDecor) {
         enableCustomDecor.addEventListener('change', function() {
@@ -1181,9 +1224,10 @@ function updateRecap() {
     const fluoColor = document.getElementById('fluoColor')?.value || '';
     const alienMode = document.getElementById('enableAlienMode')?.checked ? '👽 ACTIVÉ' : 'Désactivé';
     const textsActive = document.getElementById('enableMagicTexts')?.checked ? '✨ ACTIVÉS' : 'Désactivés';
-    const decorActif = document.getElementById('enableCustomDecor')?.checked ? '✅ PERSONNALISÉ' : 'Auto';
     
-    // Récupération des gestes finaux pour le récap
+    // UN SEUL SYSTÈME DE DÉCOR
+    const decorActif = document.getElementById('enableCustomDecor')?.checked ? '✅ PERSONNALISÉ' : 'Auto (selon personnage)';
+    
     const finaleActif = 
         (document.getElementById('finalBisou')?.checked ? '💋' : '') +
         (document.getElementById('finalCiao')?.checked ? '👋' : '') +
@@ -1226,6 +1270,5 @@ function updateRecap() {
     if (recapDiv) recapDiv.innerHTML = recap.replace(/\n/g, '<br>');
 }
 
-if (typeof personnageActions === 'undefined') {
-    console.warn("⚠️ personnageActions n'est pas défini - vérifiez que actions.js est chargé");
-}
+// Vérification finale
+console.log("✅ script.js chargé - Version avec décors unifiés et transition naturelle renforcée");
